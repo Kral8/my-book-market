@@ -3,109 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nude Book Market | LIVE</title>
+    <title>Nude Book Market | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #F5EBE0; color: #4E342E; }
-        .nude-card { background-color: #FAF3E0; border: 1px solid #D7CCC8; transition: all 0.3s; }
-        .nude-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .btn-primary { background-color: #D3B8AE; color: white; border-radius: 99px; }
-        .btn-primary:hover { background-color: #BCAAA4; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #F8F1EA; color: #5D4037; }
+        .nude-card { background: #FAF3E0; border: 1px solid #E6D5C9; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nude-card:hover { transform: scale(1.02); shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .btn-nude { background-color: #D3B8AE; color: white; border-radius: 99px; transition: 0.3s; }
+        .btn-nude:hover { background-color: #BCAAA4; transform: translateY(-2px); }
+        .cart-badge { background: #8D6E63; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; position: absolute; top: -5px; right: -10px; }
+        .best-seller { border: 2px solid #D4AF37; }
     </style>
 </head>
 <body>
 
-    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto">
-        <h1 class="text-2xl font-semibold tracking-widest uppercase text-[#8D6E63]">Bookish.Live</h1>
-        <button onclick="toggleModal()" class="btn-primary px-6 py-2 text-sm font-medium shadow-sm">+ Продать</button>
+    <nav class="sticky top-0 z-40 bg-[#F8F1EA]/80 backdrop-blur-md p-6 border-b border-[#E6D5C9]">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-semibold tracking-tighter text-[#8D6E63]">BOOKISH.PRO</h1>
+            <div class="flex items-center gap-6">
+                <div class="relative cursor-pointer" onclick="toggleCart()">
+                    <span>🛒</span>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </div>
+                <button onclick="toggleModal()" class="btn-nude px-6 py-2 text-sm font-medium shadow-md">+ Выставить</button>
+            </div>
+        </div>
     </nav>
 
-    <header class="text-center py-12 px-4">
-        <h2 class="text-4xl font-light mb-2 text-[#5D4037]">Единый Маркетплейс</h2>
-        <p class="text-[#A1887F] italic text-sm">Все книги в реальном времени</p>
-    </header>
-
-    <main class="max-w-6xl mx-auto p-6">
-        <div id="market-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    <section class="max-w-6xl mx-auto p-6 mt-8">
+        <h2 class="text-xl font-light mb-6 uppercase tracking-widest text-[#A1887F]">Выбор недели ✨</h2>
+        <div id="best-sellers" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             </div>
-    </main>
 
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-30 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-[#F5EBE0] p-8 rounded-2xl max-w-md w-full shadow-2xl border border-[#D7CCC8]">
-            <h3 class="text-2xl mb-6 text-[#5D4037]">Выставить книгу</h3>
-            <div class="space-y-4">
-                <input id="bookTitle" type="text" placeholder="Название книги" class="w-full p-3 rounded-xl bg-[#FAF3E0] border border-[#D7CCC8] outline-none">
-                <input id="bookAuthor" type="text" placeholder="Автор" class="w-full p-3 rounded-xl bg-[#FAF3E0] border border-[#D7CCC8] outline-none">
-                <input id="bookPrice" type="number" placeholder="Цена (₽)" class="w-full p-3 rounded-xl bg-[#FAF3E0] border border-[#D7CCC8] outline-none">
-                <input id="bookSeller" type="text" placeholder="Ваш ник в Telegram (без @)" class="w-full p-3 rounded-xl bg-[#FAF3E0] border border-[#D7CCC8] outline-none">
-                <button onclick="saveToSupabase()" class="w-full btn-primary py-4 font-bold uppercase tracking-widest text-xs">Опубликовать</button>
-                <button onclick="toggleModal()" class="w-full text-[#A1887F] text-[10px] uppercase underline mt-2">Закрыть</button>
+        <hr class="border-[#E6D5C9] mb-12">
+
+        <h2 class="text-xl font-light mb-6 uppercase tracking-widest text-[#A1887F]">Все книги</h2>
+        <div id="market-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+    </section>
+
+    <div id="modal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-[#F8F1EA] p-8 rounded-3xl max-w-md w-full shadow-2xl">
+            <h3 class="text-2xl mb-6 text-[#5D4037]">Детали книги</h3>
+            <div class="space-y-3">
+                <input id="bookTitle" type="text" placeholder="Название" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white">
+                <input id="bookAuthor" type="text" placeholder="Автор" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white">
+                <input id="bookPrice" type="number" placeholder="Цена (₽)" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white">
+                <input id="bookImg" type="text" placeholder="Ссылка на фото обложки" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white">
+                <textarea id="bookDesc" placeholder="Краткое описание" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white h-24"></textarea>
+                <input id="bookSeller" type="text" placeholder="Ваш Telegram" class="w-full p-3 rounded-xl border border-[#E6D5C9] bg-white">
+                <button onclick="saveToSupabase()" class="w-full btn-nude py-4 font-bold uppercase text-xs">Опубликовать</button>
+                <button onclick="toggleModal()" class="w-full text-xs opacity-50 uppercase mt-2 italic">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black/40 hidden flex items-end md:items-center justify-end p-4 z-50">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-sm h-full md:h-auto shadow-2xl">
+            <h3 class="text-2xl mb-6">Ваша корзина</h3>
+            <div id="cart-items" class="space-y-4 max-h-96 overflow-y-auto"></div>
+            <div class="border-t mt-6 pt-4">
+                <button onclick="alert('Функция оплаты будет в следующем обновлении, брат!')" class="w-full btn-nude py-4">Оформить заказ</button>
+                <button onclick="toggleCart()" class="w-full mt-2 text-xs opacity-50">Закрыть</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ТВОИ ДАННЫЕ УЖЕ ТУТ, БРАТ:
-        const SUPABASE_URL = 'https://nkdabzyyrspiqpvagreq.supabase.co'; // <--- ТЕБЕ НУЖНО ВСТАВИТЬ ТОЛЬКО URL
+        const SUPABASE_URL = 'ВСТАВЬ_СВОЙ_URL'; 
         const SUPABASE_KEY = 'sb_publishable_6AAmXFKmamh1_J3ytdrZrg_XnfpWsVL';
-        
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function fetchBooks() {
-            const { data, error } = await _supabase
-                .from('books')
-                .select('*')
-                .order('id', { ascending: false });
+        let cart = [];
 
-            if (error) {
-                console.error("Ошибка получения:", error);
-                return;
-            }
-            renderBooks(data);
+        async function fetchBooks() {
+            const { data, error } = await _supabase.from('books').select('*').order('id', { ascending: false });
+            if (!error) renderAll(data);
         }
 
-        function renderBooks(books) {
-            const grid = document.getElementById('market-grid');
-            grid.innerHTML = books.length ? '' : '<p class="col-span-full text-center opacity-50">Книг пока нет, будь первым!</p>';
+        function renderAll(books) {
+            const bestGrid = document.getElementById('best-sellers');
+            const mainGrid = document.getElementById('market-grid');
             
-            books.forEach(book => {
-                grid.innerHTML += `
-                    <div class="nude-card p-6 rounded-3xl">
-                        <div class="h-40 bg-[#D3B8AE] mb-4 rounded-2xl opacity-30 flex items-center justify-center italic text-white text-xl font-bold">BOOK</div>
-                        <h4 class="text-lg font-semibold text-[#5D4037] truncate">${book.title}</h4>
-                        <p class="text-xs text-[#8D6E63] mb-4 tracking-wider uppercase">${book.author}</p>
-                        <div class="flex justify-between items-center border-t border-[#D7CCC8] pt-4">
+            bestGrid.innerHTML = '';
+            mainGrid.innerHTML = '';
+
+            books.forEach((book, i) => {
+                const img = book.image_url || 'https://via.placeholder.com/300x400?text=No+Image';
+                const cardHtml = `
+                    <div class="nude-card p-5 rounded-[2rem] flex flex-col h-full ${i < 2 ? 'best-seller' : ''}">
+                        <img src="${img}" class="h-64 w-full object-cover rounded-2xl mb-4 shadow-sm">
+                        <h4 class="text-lg font-bold truncate">${book.title}</h4>
+                        <p class="text-xs opacity-60 mb-2 uppercase tracking-tighter">${book.author}</p>
+                        <p class="text-sm italic opacity-80 line-clamp-2 mb-4 flex-grow">${book.description || 'Нет описания'}</p>
+                        <div class="flex justify-between items-center mt-auto border-t pt-4">
                             <span class="text-xl font-light">${book.price} ₽</span>
-                            <a href="https://t.me/${book.seller}" target="_blank" class="px-4 py-2 bg-white rounded-full text-[10px] font-bold uppercase border border-[#D7CCC8] hover:bg-[#5D4037] hover:text-white transition shadow-sm">Купить</a>
+                            <div class="flex gap-2">
+                                <button onclick="addToCart('${book.title}', ${book.price})" class="p-2 bg-white border border-[#E6D5C9] rounded-full hover:bg-gray-100 text-lg">🛒</button>
+                                <a href="https://t.me/${book.seller}" target="_blank" class="px-4 py-2 btn-nude text-[10px] uppercase font-bold">Связь</a>
+                            </div>
                         </div>
                     </div>`;
+                
+                if (i < 2) bestGrid.innerHTML += cardHtml;
+                else mainGrid.innerHTML += cardHtml;
             });
         }
 
         async function saveToSupabase() {
-            const title = document.getElementById('bookTitle').value;
-            const author = document.getElementById('bookAuthor').value;
-            const price = document.getElementById('bookPrice').value;
-            const seller = document.getElementById('bookSeller').value;
+            const book = {
+                title: document.getElementById('bookTitle').value,
+                author: document.getElementById('bookAuthor').value,
+                price: document.getElementById('bookPrice').value,
+                image_url: document.getElementById('bookImg').value,
+                description: document.getElementById('bookDesc').value,
+                seller: document.getElementById('bookSeller').value
+            };
 
-            if (!title || !price || !seller) return alert("Заполни все поля, брат!");
+            const { error } = await _supabase.from('books').insert([book]);
+            if (!error) { toggleModal(); fetchBooks(); } else { alert(error.message); }
+        }
 
-            const { error } = await _supabase
-                .from('books')
-                .insert([{ title, author, price, seller }]);
+        function addToCart(title, price) {
+            cart.push({ title, price });
+            updateCartUI();
+        }
 
-            if (error) {
-                alert("Ошибка! Проверь, отключил ли ты RLS в Supabase: " + error.message);
-            } else {
-                toggleModal();
-                fetchBooks(); // Обновляем список
-                alert("Книга успешно добавлена!");
-            }
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const container = document.getElementById('cart-items');
+            container.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center border-b pb-2 text-sm">
+                    <span>${item.title}</span>
+                    <span class="font-bold">${item.price} ₽</span>
+                </div>
+            `).join('');
         }
 
         function toggleModal() { document.getElementById('modal').classList.toggle('hidden'); }
+        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); }
 
         fetchBooks();
     </script>
