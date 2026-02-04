@@ -1,241 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tim Gulamov | Digital Architect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --accent: #00f2ff;
-            --text: #ffffff;
-            --bg: #020204;
-            --glow: 0 0 20px rgba(0, 242, 255, 0.5);
-        }
-
-        * { cursor: none !important; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            overflow-x: hidden;
-            background: radial-gradient(circle at center, #0a0a1a 0%, #020204 100%);
-        }
-
-        /* ХОЛСТ ДЛЯ НЕЙРОСЕТИ */
-        #canvas-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        /* КАСТОМНЫЙ КУРСОР */
-        #cursor-dot {
-            width: 6px; height: 6px; background: var(--accent);
-            border-radius: 50%; position: fixed; pointer-events: none;
-            z-index: 10000; box-shadow: var(--glow); transition: transform 0.1s;
-        }
-        #cursor-outline {
-            width: 35px; height: 35px; border: 1px solid var(--accent);
-            border-radius: 50%; position: fixed; pointer-events: none;
-            z-index: 9999; transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .lang-switch { position: fixed; top: 30px; right: 30px; z-index: 1000; }
-        .lang-btn {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px); color: white; padding: 10px 25px;
-            border-radius: 12px; font-family: 'Orbitron'; transition: 0.4s;
-            letter-spacing: 2px;
-        }
-        .lang-btn:hover { background: rgba(0, 242, 255, 0.1); border-color: var(--accent); box-shadow: var(--glow); }
-
-        header { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        h1 { font-family: 'Orbitron'; font-size: clamp(2rem, 10vw, 5.5rem); letter-spacing: 15px; margin: 0; transition: 0.5s; font-weight: 700; }
-        h1:hover { text-shadow: 0 0 40px var(--accent); letter-spacing: 18px; }
-        .subtitle { letter-spacing: 6px; opacity: 0.4; text-transform: uppercase; margin-top: 20px; font-weight: 300; }
-
-        .container { max-width: 1200px; margin: auto; padding: 0 20px 100px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-
-        .card {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(25px); border-radius: 24px; padding: 50px;
-            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
-        }
-        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 40px rgba(0, 242, 255, 0.15); }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 24px; background: linear-gradient(135deg, rgba(0,242,255,0.05) 0%, transparent 100%);
-            pointer-events: none;
-        }
-
-        h2, h3 { font-family: 'Orbitron'; color: var(--accent); margin-top: 0; letter-spacing: 3px; }
-        p { opacity: 0.8; font-weight: 300; line-height: 1.8; }
-
-        .tg-section { text-align: center; padding: 120px 20px; }
-        .tg-btn {
-            display: inline-block; background: transparent; color: white; padding: 22px 70px;
-            border: 1px solid var(--accent); border-radius: 12px; font-family: 'Orbitron';
-            text-decoration: none; transition: 0.4s; letter-spacing: 3px;
-        }
-        .tg-btn:hover { background: var(--accent); color: black; box-shadow: var(--glow); transform: scale(1.05); }
-
-        .hidden { display: none; }
-        footer { text-align: center; padding: 60px; opacity: 0.2; font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; }
-        
-        b { color: var(--accent); font-weight: 600; }
-    </style>
+    <title>Book Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-    <canvas id="canvas-bg"></canvas>
-    <div id="cursor-dot"></div>
-    <div id="cursor-outline"></div>
-
-    <div class="lang-switch">
-        <button class="lang-btn" onclick="toggleLang()" id="Lbtn">EN</button>
-    </div>
-
-    <header>
-        <h1>YUNA VERNE</h1>
-        <p class="subtitle lang-ru">МАРКЕТ КНИГ</p>
-        <p class="subtitle lang-en hidden">NEXT-GEN DIGITAL SOLUTIONS</p>
-    </header>
-
-    <div class="container">
-        <div class="card" style="margin-bottom: 30px; width: 100%;">
-            <div class="lang-ru">
-                <h2>ОБО МНЕ</h2>
-                <p>Цифровой архитектор и разработчик. Я создаю экосистемы на стыке высоких технологий и премиального дизайна. Специализируюсь на <b>Web3</b>, <b>AI-интеграциях</b> и программном обеспечении уровня <b>Enterprise</b>.</p>
-            </div>
-            <div class="lang-en hidden">
-                <h2>ABOUT ME</h2>
-                <p>Digital Architect and Developer. I build ecosystems at the intersection of high technology and premium design. Specialized in <b>Web3</b>, <b>AI-integration</b>, and <b>Enterprise</b> level software.</p>
-            </div>
+<body class="bg-gray-100 p-5">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">📚 Маркет Книг</h1>
+        
+        <div class="mb-8 p-4 border rounded">
+            <h2 class="text-xl mb-4 font-semibold">Продать книгу</h2>
+            <input id="title" type="text" placeholder="Название" class="w-full mb-2 p-2 border rounded">
+            <input id="price" type="number" placeholder="Цена (₽)" class="w-full mb-2 p-2 border rounded">
+            <button onclick="addBook()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Опубликовать</button>
         </div>
 
-        <div class="card">
-    <div class="lang-ru">
-        <h3>NEURO ARBITRAGE</h3>
-        <p>Высокотехнологичный алгоритм мониторинга <b>межбиржевого спреда</b>. Наш нейро-сканер в реальном времени вычисляет неэффективности рынка между <b>Bybit</b>, <b>MEXC</b> и топ-биржами, обеспечивая мгновенный отклик и максимальный профит.</p>
-        <a href="https://t.me/neuro_arbitrage_pro" class="tg-btn" style="padding: 12px 30px; font-size: 0.8rem; margin-top: 15px;">START SCANNER</a>
-    </div>
-    <div class="lang-en hidden">
-        <h3>NEURO ARBITRAGE</h3>
-        <p>High-frequency <b>cross-exchange arbitrage</b> algorithm. Our neural engine identifies real-time market inefficiencies between <b>Bybit</b>, <b>MEXC</b>, and tier-1 exchanges, delivering ultra-low latency and maximum yield.</p>
-        <a href="https://t.me/neuro_arbitrage_pro" class="tg-btn" style="padding: 12px 30px; font-size: 0.8rem; margin-top: 15px;">START SCANNER</a>
-    </div>
-</div>
-            <div class="card">
-                <div class="lang-ru">
-                    <h3>ОПЫТ</h3>
-                    <p><b>Lead Tech Specialist</b> (2022-2026)<br>Более 50 успешно реализованных проектов по всему миру. От разработки сложного ПО до архитектуры мобильных приложений.</p>
-                </div>
-                <div class="lang-en hidden">
-                    <h3>EXPERIENCE</h3>
-                    <p><b>Lead Tech Specialist</b> (2022-2026)<br>Successfully delivered 50+ international projects. From complex software engineering to mobile app architecture.</p>
-                </div>
+        <h2 class="text-xl mb-4 font-semibold">Объявления</h2>
+        <div id="bookList" class="space-y-4">
             </div>
-
-            <div class="card">
-                <div class="lang-ru">
-                    <h3>ТЕХНОЛОГИИ</h3>
-                    <p>• Advanced Software Architecture<br>• iOS / Android Development<br>• Blockchain & Smart Contracts<br>• Elite UI/UX Design Systems</p>
-                </div>
-                <div class="lang-en hidden">
-                    <h3>TECH STACK</h3>
-                    <p>• Advanced Software Architecture<br>• iOS / Android Development<br>• Blockchain & Smart Contracts<br>• Elite UI/UX Design Systems</p>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <div class="tg-section">
-        <a href="https://t.me/Neural_Bio_X" class="tg-btn">CONTACT VIA TELEGRAM</a>
-    </div>
-
-    <footer>&copy; 2026 YUNA VERNE | ARCHITECT OF THE FUTURE</footer>
 
     <script>
-        // КУРСОР
-        const dot = document.getElementById('cursor-dot');
-        const outline = document.getElementById('cursor-outline');
-        let mouseX = 0, mouseY = 0;
+        function addBook() {
+            const title = document.getElementById('title').value;
+            const price = document.getElementById('price').value;
+            if (!title || !price) return alert("Заполни поля!");
 
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
-            outline.style.left = (mouseX - 17) + 'px'; outline.style.top = (mouseY - 17) + 'px';
-        });
-
-        // ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА
-        function toggleLang() {
-            const ru = document.querySelectorAll('.lang-ru');
-            const en = document.querySelectorAll('.lang-en');
-            const btn = document.getElementById('Lbtn');
-            ru.forEach(el => el.classList.toggle('hidden'));
-            en.forEach(el => el.classList.toggle('hidden'));
-            btn.innerText = ru[0].classList.contains('hidden') ? 'RU' : 'EN';
+            const bookList = document.getElementById('bookList');
+            const card = document.createElement('div');
+            card.className = "p-4 border-l-4 border-blue-500 bg-gray-50 flex justify-between items-center shadow-sm";
+            card.innerHTML = `<div><strong>${title}</strong><br><span class="text-gray-600">${price} ₽</span></div> 
+                              <button class="text-red-500 text-sm">Удалить</button>`;
+            
+            bookList.appendChild(card);
+            
+            // Очистка формы
+            document.getElementById('title').value = '';
+            document.getElementById('price').value = '';
         }
-
-        // НЕЙРОСЕТЬ НА ФОНЕ
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function initCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', initCanvas);
-        initCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-        }
-
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                particles.forEach(p2 => {
-                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 120) {
-                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/120})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-                    }
-                });
-                // Связь с мышкой
-                let mDist = Math.hypot(p.x - mouseX, p.y - mouseY);
-                if (mDist < 200) {
-                    ctx.strokeStyle = `rgba(0, 242, 255, ${1 - mDist/200})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.stroke();
-                }
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
     </script>
 </body>
 </html>
