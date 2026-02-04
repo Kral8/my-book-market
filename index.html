@@ -3,43 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Market</title>
+    <title>Nude Book Market | Твой уютный книжный</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F5EBE0; /* Нюдовый фон */
+            color: #4E342E;
+        }
+        .nude-card {
+            background-color: #FAF3E0;
+            border: 1px solid #D7CCC8;
+            transition: transform 0.3s ease;
+        }
+        .nude-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .btn-primary {
+            background-color: #D3B8AE;
+            color: white;
+            transition: background 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #BCAAA4;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-5">
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">📚 Маркет Книг</h1>
-        
-        <div class="mb-8 p-4 border rounded">
-            <h2 class="text-xl mb-4 font-semibold">Продать книгу</h2>
-            <input id="title" type="text" placeholder="Название" class="w-full mb-2 p-2 border rounded">
-            <input id="price" type="number" placeholder="Цена (₽)" class="w-full mb-2 p-2 border rounded">
-            <button onclick="addBook()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Опубликовать</button>
-        </div>
+<body>
 
-        <h2 class="text-xl mb-4 font-semibold">Объявления</h2>
-        <div id="bookList" class="space-y-4">
+    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto">
+        <h1 class="text-2xl font-semibold tracking-widest uppercase text-[#8D6E63]">Bookish.</h1>
+        <button onclick="toggleModal()" class="btn-primary px-6 py-2 rounded-full text-sm font-medium shadow-sm">
+            + Продать книгу
+        </button>
+    </nav>
+
+    <header class="text-center py-16 px-4">
+        <h2 class="text-4xl md:text-5xl font-light mb-4 text-[#5D4037]">Найди свою следующую историю</h2>
+        <p class="text-[#A1887F] max-w-lg mx-auto italic">Вторая жизнь для ваших любимых книг в эстетике минимализма</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <div id="market-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
             </div>
+    </main>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-30 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-[#F5EBE0] p-8 rounded-2xl max-w-md w-full shadow-2xl">
+            <h3 class="text-2xl mb-6 text-[#5D4037]">Выставить книгу</h3>
+            <div class="space-y-4">
+                <input id="bookTitle" type="text" placeholder="Название книги" class="w-full p-3 rounded-lg bg-[#FAF3E0] border border-[#D7CCC8] outline-none focus:border-[#8D6E63]">
+                <input id="bookAuthor" type="text" placeholder="Автор" class="w-full p-3 rounded-lg bg-[#FAF3E0] border border-[#D7CCC8] outline-none focus:border-[#8D6E63]">
+                <input id="bookPrice" type="number" placeholder="Цена (₽)" class="w-full p-3 rounded-lg bg-[#FAF3E0] border border-[#D7CCC8] outline-none focus:border-[#8D6E63]">
+                <input id="bookSeller" type="text" placeholder="Ваш Telegram для связи" class="w-full p-3 rounded-lg bg-[#FAF3E0] border border-[#D7CCC8] outline-none focus:border-[#8D6E63]">
+                <div class="flex gap-2 pt-4">
+                    <button onclick="saveBook()" class="flex-1 btn-primary py-3 rounded-xl">Опубликовать</button>
+                    <button onclick="toggleModal()" class="flex-1 bg-white text-[#8D6E63] py-3 rounded-xl border border-[#D7CCC8]">Отмена</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        function addBook() {
-            const title = document.getElementById('title').value;
-            const price = document.getElementById('price').value;
-            if (!title || !price) return alert("Заполни поля!");
+    <footer class="text-center py-20 text-[#A1887F] text-sm uppercase tracking-widest">
+        &copy; 2024 Nude Book Market — Эстетика чтения
+    </footer>
 
-            const bookList = document.getElementById('bookList');
-            const card = document.createElement('div');
-            card.className = "p-4 border-l-4 border-blue-500 bg-gray-50 flex justify-between items-center shadow-sm";
-            card.innerHTML = `<div><strong>${title}</strong><br><span class="text-gray-600">${price} ₽</span></div> 
-                              <button class="text-red-500 text-sm">Удалить</button>`;
+    <script>
+        // Данные сохраняем в localStorage, чтобы они не удалялись при обновлении страницы у тебя
+        let books = JSON.parse(localStorage.getItem('myBooks')) || [
+            { title: "Тайная история", author: "Донна Тартт", price: "850", seller: "@nude_books", date: "01.10.2024" },
+            { title: "Нормальные люди", author: "Салли Руни", price: "600", seller: "@book_lover", date: "02.10.2024" }
+        ];
+
+        function renderBooks() {
+            const grid = document.getElementById('market-grid');
+            grid.innerHTML = '';
             
-            bookList.appendChild(card);
-            
-            // Очистка формы
-            document.getElementById('title').value = '';
-            document.getElementById('price').value = '';
+            books.forEach((book, index) => {
+                grid.innerHTML += `
+                    <div class="nude-card p-6 rounded-3xl">
+                        <div class="h-48 bg-[#D3B8AE] mb-4 rounded-xl opacity-40 flex items-center justify-center text-white italic">Обложка</div>
+                        <h4 class="text-lg font-semibold text-[#5D4037]">${book.title}</h4>
+                        <p class="text-sm text-[#8D6E63] mb-4">${book.author}</p>
+                        <div class="flex justify-between items-center border-t border-[#D7CCC8] pt-4">
+                            <span class="text-lg font-bold">${book.price} ₽</span>
+                            <a href="https://t.me/${book.seller.replace('@','')}" class="text-xs uppercase tracking-tighter text-[#A1887F] hover:text-[#5D4037]">Связаться</a>
+                        </div>
+                    </div>
+                `;
+            });
         }
+
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveBook() {
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const price = document.getElementById('bookPrice').value;
+            const seller = document.getElementById('bookSeller').value;
+
+            if (title && author && price && seller) {
+                const newBook = { title, author, price, seller, date: new Date().toLocaleDateString() };
+                books.unshift(newBook);
+                localStorage.setItem('myBooks', JSON.stringify(books));
+                renderBooks();
+                toggleModal();
+                // Очистка полей
+                document.getElementById('bookTitle').value = '';
+                document.getElementById('bookAuthor').value = '';
+                document.getElementById('bookPrice').value = '';
+                document.getElementById('bookSeller').value = '';
+            } else {
+                alert("Пожалуйста, заполни все поля, брат!");
+            }
+        }
+
+        // Запуск при загрузке
+        renderBooks();
     </script>
 </body>
 </html>
